@@ -253,8 +253,6 @@ class Agent():
                 for a in range(self.num_agents):
                     self.replay_buffer.append(states_t[a], actions[a], rewards[a], next_states_t[a], dones[a])
 
-                self.learn()
-
                 states = next_states
 
                 if np.any(dones):
