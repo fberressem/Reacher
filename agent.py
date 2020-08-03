@@ -179,7 +179,7 @@ class Agent():
         recent_losses = deque(maxlen=100)
 
         f = open("performance.log", "w")
-        f.write("#Score\tAvg.Score\tLoss\tAvg.Loss\n")
+        f.write("#Score\tAvg.Score\n")
 
         for e in range(self.num_episodes):
             scores = np.zeros(self.num_agents)
