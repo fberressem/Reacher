@@ -10,7 +10,7 @@ class Env():
         ======
             no_graphics(bool): flag for visualizing interaction with environment
         """
-        self.env = UnityEnvironment(file_name="./Reacher_Linux_Many/Reacher.x86_64", no_graphics = no_graphics)
+        self.env = UnityEnvironment(file_name="./Reacher_Linux/Reacher.x86_64", no_graphics = no_graphics)
         self.brain_name = self.env.brain_names[0]
         self.brain = self.env.brains[self.brain_name]
 
