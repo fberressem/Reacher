@@ -40,10 +40,6 @@ class Agent():
 
         self.noise = utils.OUNoise((self.num_agents, 4), 0)
 
-        self.epsilon = agent_dict.get("epsilon_start", 0.1)
-        self.epsilon_decay = agent_dict.get("epsilon_decay", 0.9)
-        self.epsilon_min = agent_dict.get("epsilon_min", 0.1)
-
         self.num_replays = agent_dict.get("num_replays", 1)
 
         self.learning_rate_actor = agent_dict.get("learning_rate_actor", 1E-3)
@@ -141,9 +137,6 @@ class Agent():
 
         f_state = open(self.name + "_parameters.dat", "w")
         f_state.write("gamma = " + str(self.gamma) + "\n")
-        f_state.write("epsilon = " + str(self.epsilon) + "\n")
-        f_state.write("epsilon_decay = " + str(self.epsilon_decay) + "\n")
-        f_state.write("epsilon_min = " + str(self.epsilon_min) + "\n")
         f_state.write("tau = " + str(self.tau) + "\n")
         f_state.write("num_replays = " + str(self.num_replays))
         f_state.close()
@@ -154,12 +147,6 @@ class Agent():
             param, val = line.split(" = ")
             if "gamma" in param:
                 self.gamma = float(val)
-            elif "epsilon_decay" in param:
-                self.epsilon_decay = float(val)
-            elif "epsilon_min" in param:
-                self.epsilon_min = float(val)
-            elif "epsilon" in param:
-                self.epsilon = float(val)
             elif "tau" in param:
                 self.tau = float(val)
             elif "num_replays" in param:
@@ -216,8 +203,6 @@ class Agent():
             f.write(str(np.mean(scores))+ "\t" + str(np.mean(recent_scores)) + "\n")
 
             f.flush()
-
-            self.epsilon = max(self.epsilon*self.epsilon_decay, self.epsilon_min)
 
             utils.copy_model(self.actor, self.actor_target, tau=self.tau)
             utils.copy_model(self.critic, self.critic_target, tau=self.tau)
