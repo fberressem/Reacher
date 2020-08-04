@@ -244,10 +244,9 @@ class Agent():
             scores = np.zeros(self.num_agents)
             states = env.reset()
             done = False
-            self.noise.reset()
 
             while True:
-                actions, states_t = self.act(states)
+                actions, states_t = self.act(states, add_noise=False)
 
                 next_states, rewards, dones, _ = env.step(actions)
                 scores += rewards
