@@ -15,9 +15,9 @@ To learn this action-value function the agent makes an (typically very poor) ini
 
 Here, <img src="https://latex.codecogs.com/svg.latex?\alpha" /> is the so called *learning-rate*, which is typically chosen quite small to improve the convergence of the updates by decreasing the fluctuations. In principle, this action-value function can be used to calculate the best action to take given state *S<sub>t</sub>* by calculating its *argmax*. However, in some cases, this is not feasible as the action-space is too large to calculate the *argmax* of the action-value function. This is especially the case for continuous actions, as in this case the action-space is infinitely large. In DDPG this is solved as follows: There are two neural networks involved, one which approximates the action-value function, called the *critic* and one network which tries to approximate the *argmax* of the action-value function, called the *actor*. The actor can be optimized by applying *gradient ascent* to the action value function:
 
-<p align="center"> <img src="https://latex.codecogs.com/svg.latex?\theta=\theta+\alpha_\mu\nabla_{\theta}E\left[q_\pi(S_t,\mu_\theta(S_t))\right]" /></p>
+<p align="center"> <img src="https://latex.codecogs.com/svg.latex?\theta=\theta+\alpha_\theta\nabla_{\theta}E\left[q_\pi(S_t,\mu_\theta(S_t))\right]" /></p>
 
-Here, <img src="https://latex.codecogs.com/svg.latex?\theta" /> corresponds to the actor's network weights, while  <img src="https://latex.codecogs.com/svg.latex?\mu_\theta(S_t)" /> is the action proposed by the actor given the state *S<sub>t</sub>* and the network weights <img src="https://latex.codecogs.com/svg.latex?\theta" />. The expectation in the expression above is taken with respect to the observations sampled from previous observations and <img src="https://latex.codecogs.com/svg.latex?\alpha_\mu" /> is the actor's learning rate.
+Here, <img src="https://latex.codecogs.com/svg.latex?\theta" /> corresponds to the actor's network weights, while  <img src="https://latex.codecogs.com/svg.latex?\mu_\theta(S_t)" /> is the action proposed by the actor given the state *S<sub>t</sub>* and the network weights <img src="https://latex.codecogs.com/svg.latex?\theta" />. The expectation in the expression above is taken with respect to the observations sampled from previous observations and <img src="https://latex.codecogs.com/svg.latex?\alpha_\theta" /> is the actor's learning rate.
 
 Now the procedure is as follows:
 1. The agent observes a state
@@ -31,5 +31,47 @@ where <img src="https://latex.codecogs.com/svg.latex?q_\phi(S_t,A_t)" /> is the 
 
 5. During training, he updates the actor's network weights <img src="https://latex.codecogs.com/svg.latex?\theta" /> as follows:
 
-<p align="center"> <img src="https://latex.codecogs.com/svg.latex?\theta=\theta+\alpha_\mu\nabla_{\theta}E\left[q_\pi(S_t,\mu_\theta(S_t))\right]" /></p>
+<p align="center"> <img src="https://latex.codecogs.com/svg.latex?\theta=\theta+\alpha_\theta\nabla_{\theta}E\left[q_\pi(S_t,\mu_\theta(S_t))\right]" /></p>
 
+To facilitate exploration, the actions proposed by the actor were altered by adding some *Ornstein-Uhlenbeck-noise* when interacting with the environment. To ensure, that the actions still lie in the allowed range, the actions are clipped to the corresponding range after the addition of the noise.
+
+An improvement to the algorithm was the usage of *replay buffers*: Replay buffers are storages for sequences observed by the agent while interacting with the environment. The memories in the replay buffer can be used to train the agent while not actually interacting with the environment by reusing previous observations. This leads to a more efficient usage of experiences, in turn making learning more efficient. Besides that, it typically leads to better generalization, as the agent is trained on potentially old memories, so that it does not forget about previous experiences and so that it is subject to a larger variety of different situations. Replay buffers can be considered a very simple "model of the environment" in that they assume that memories from the past are representative for the underlying dynamics of the environment.
+
+To make training more stable, *fixed Q-targets* were used. In this technique, the agent uses two neural networks of the same architecture, where one is network not trained via gradient descent but whose weigths <img src="https://latex.codecogs.com/svg.latex?\omega" /> are updated using soft updates:
+
+<p align="center"> <img src="https://latex.codecogs.com/svg.latex?\omega=\tau\omega^{\prime}+(1-\tau)\omega" /></p>
+
+here, <img src="https://latex.codecogs.com/svg.latex?\omega^{\prime}" /> are the weights of the neural network that is trained using some form of gradient descent.
+
+
+### Network Architecture and Hyperparameters
+
+The neural networks used here were simple *dense networks*, i.e. they consist of fully connected layers only. The architecture for the actor was as follows:
+
+- Input layer of size `33` (corresponding to the 33 dimensions of the state)
+- Hidden layer with `256` neurons and `ReLU`-activation
+- Hidden layer with `128` neurons and `ReLU`-activation
+- Output layer with `4` neurons (corresponding to the 4-dimensional actions) with `tanh` activation function
+
+The architecture for the critic was as follows:
+
+- Input layer of size `33` (corresponding to the 33 dimensions of the state)
+- Hidden layer with `256` neurons and `ReLU`-activation
+- Concatenation of 4-dimensional actions, hence making this layer `260`-dimensional
+- Hidden layer with `128` neurons and `ReLU`-activation
+- Output layer with `1` neuron (corresponding to the action-value) without activation function, i.e. linearly activated.
+
+The hyperparameters used are given in the table below:
+
+| Hyperparameter   |      Value      |
+|----------|:-------------:|
+| Q-target parameter <img src="https://latex.codecogs.com/svg.latex?\tau" /> |  0.001  |
+| Discount factor <img src="https://latex.codecogs.com/svg.latex?\gamma" /> |    0.99   |
+| Batchsize | 2^7 |
+| Size of replay buffer | 2^14 |
+| Number of replays per learning phase | 1 |
+| Actor learning rate <img src="https://latex.codecogs.com/svg.latex?\alpha_\theta" /> | 0.0001 |
+| Critic learning rate <img src="https://latex.codecogs.com/svg.latex?\alpha_\phi" /> | 0.0001 |
+| Ornstein-Uhlenbeck mean reversion level <img src="https://latex.codecogs.com/svg.latex?\mu_{OU}" /> | 0 |
+| Ornstein-Uhlenbeck mean reversion rate <img src="https://latex.codecogs.com/svg.latex?\theta_{OU}" /> | 0.15 |
+| Ornstein-Uhlenbeck diffusion constant <img src="https://latex.codecogs.com/svg.latex?\sigma_{OU}" /> | 0.2 |
