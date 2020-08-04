@@ -22,7 +22,11 @@ class Agent():
             actor_dict(dict): dictionary containing parameters for agents actor-model
             critic_dict(dict): dictionary containing parameters for agents critic-model
         """
-        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        enable_cuda = agent_dict.get("enable_cuda", False)
+        if enable_cuda:
+            self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        else:
+            self.device = torch.device("cpu")
         
         self.num_agents = agent_dict.get("num_agents", 20)        
     
