@@ -75,3 +75,25 @@ The hyperparameters used are given in the table below:
 | Ornstein-Uhlenbeck mean reversion level <img src="https://latex.codecogs.com/svg.latex?\mu_{OU}" /> | 0 |
 | Ornstein-Uhlenbeck mean reversion rate <img src="https://latex.codecogs.com/svg.latex?\theta_{OU}" /> | 0.15 |
 | Ornstein-Uhlenbeck diffusion constant <img src="https://latex.codecogs.com/svg.latex?\sigma_{OU}" /> | 0.2 |
+
+### Results
+
+The reinforcement agent as described above reaches the required average score (averaged over the last 100 episodes) of **`+30`** after about 150 episodes. It achieves a score of more than **`+30`** in a single iteration after about 70 iterations. In evaluation mode, the agent reaches an average score of more than **`+39.4`**, which is quite impressive and very close to the maximum achievable score of **`+40`**. 
+
+![results](https://github.com/fberressem/Reacher/blob/master/Results.png)
+
+In general, the agent performs quite well and solves the task very quickly. However, in the following there are some suggestions on how performance may still be improved.
+
+### Future Improvements
+
+There are some improvements that may be implemented in the future:
+
+1. To make training more stable, one might change the fixed Q-targets part to *double Q-Learning* such that the choice of actions while interacting with the environment is done using either one of the neural networks with the update rules being applied accordingly. In this case, there would be no dedicated *target network* anymore, while training should still be improved, as the networks would still be regularizing each other.
+
+2. One might modify the rewards the agent sees to steer its behavior, e.g. by punishing giving an reward for small-valued actions to avoid hectic behaviour. However, this has to be done with great care as to avoid the agent learning a wrong behavior by relying on those additional rewards.
+
+3. One could add prioritization in the replay buffer which could take into account how successful (or unsuccessful) the episodes they stem from were. This might improve stability of learning as learning about very good or very bad actions would be emphasized.
+
+4. The final experiences from all the episodes could be disregarded when learning, as they are not representative for the value of the state. That is, the agent does not know about whether the next state is a terminal one or not when calculating its expected return, so that when training on this memory, it skews the value of the state, making training less stable. Hence, the performance might be improved by disregarding all next-to-terminal states in the training phase.
+
+5. Better architectures might be found using grid-searching or more sophisticated methods, like evolutionary algorithms. Given that the agent already performs quite well, this might be fruitful thing to, as in principle the agent is working and on only wants to step training up a notch. 
