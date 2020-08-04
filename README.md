@@ -1,6 +1,7 @@
 # Reacher
 Solution to the second project of Udacitys Reinforcement Learning Nanodegree
 
+![video](https://user-images.githubusercontent.com/63595824/89272032-db5ee580-d63d-11ea-8cbc-0d39483c4b31.gif)
 
 ### Quick Installation
 
