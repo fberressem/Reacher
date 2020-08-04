@@ -46,3 +46,10 @@ python evaluate.py
 ```
 
 allows to evaluate the performance of the saved agent of the given name. 
+
+
+### Background Information
+In this environment the player (or agent) has to control double-jointed arms in such a way, that they follow a given goal location. The aim is to maintain the arms position at the target location for as long as possible. In every timestep in which the agent manages to do so, he gets a reward of **`+0.1`**. At every timestep, the player is provided a 33-dimensional state (with information about position, rotation, velocity and angular velocity of the arm) per arm and has to decide on the actions to take. For every arm, the corresponding action-vector consists of 4 real numbers in the range from -1 to +1. After a given time the game is over, hence making this task an episodic one. The environment is considered solved when the player achieves an average score of **`+30`** over 100 consecutive episodes, where the score is given as the average of the scores achieved by all arms in a single iteration.
+
+For more information on the approach that was used to solve this environment, see [`Report.md`](https://github.com/fberressem/Reacher/blob/master/Report.md).
+
