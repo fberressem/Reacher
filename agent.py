@@ -141,7 +141,7 @@ class Agent():
         f_state.write("num_replays = " + str(self.num_replays))
         f_state.close()
 
-    def load_state(self):
+    def load_state(self, enable_cuda = False):
         """ Load current state of agent """
         for line in open(self.name + "_parameters.dat", "r"):
             param, val = line.split(" = ")
@@ -157,6 +157,16 @@ class Agent():
         
         self.critic = torch.load(self.name + "_critic.model")
         self.critic_target = torch.load(self.name + "_critic_target.model")
+
+        if enable_cuda:
+            self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        else:
+            self.device = torch.device("cpu")
+
+        self.actor = self.actor.to(self.device)
+        self.actor_target = self.actor_target.to(self.device)
+        self.critic = self.critic.to(self.device)
+        self.critic_target = self.critic_target.to(self.device)
 
 
     def run(self, env):

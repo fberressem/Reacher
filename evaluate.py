@@ -16,6 +16,6 @@ agent_dict={
 
 a = agent.Agent(agent_dict=agent_dict)
 
-a.load_state()
+a.load_state(enable_cuda=True)
 
 a.evaluate(env, delay=0.0)
