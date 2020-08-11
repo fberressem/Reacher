@@ -96,4 +96,4 @@ There are some improvements that may be implemented in the future:
 
 4. The final experiences from all the episodes could be disregarded when learning, as they are not representative for the value of the state. That is, the agent does not know about whether the next state is a terminal one or not when calculating its expected return, so that when training on this memory, it skews the value of the state, making training less stable. Hence, the performance might be improved by disregarding all next-to-terminal states in the training phase.
 
-5. Better architectures might be found using grid-searching or more sophisticated methods, like evolutionary algorithms. Given that the agent already performs quite well, this might be fruitful thing to, as in principle the agent is working and on only wants to step training up a notch. 
+5. Better architectures might be found using grid-searching or more sophisticated methods, like evolutionary algorithms. Given that the agent already performs quite well, this might be fruitful thing to do, as in principle the agent is working and one only wants to step training up a notch. 
